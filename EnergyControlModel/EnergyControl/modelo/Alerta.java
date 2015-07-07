@@ -1,5 +1,6 @@
 package modelo;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -102,13 +103,20 @@ public class Alerta extends TimerTask {
 			  if (usuarios!=null){
 				  for (UsuarioSuceso user:usuarios){			  
 					  
-					  if (enviar_mail_post(user)){
-						  System.out.println("envio mail correctamente");
+					  //por mail
+					  if (user.isPorEMail()){
+						  if (enviar_mail_post(user)){
+							  System.out.println("envio mail correctamente");
+						  }
+					  }
+					  //por sms
+					  if (user.isPorSMS()){
+						  if (enviar_sms(user)){
+							  System.out.println("envio sms correctamente");
+						  }
 					  }
 					  
-					  //if (enviar_mail(user)) {						  
-						//System.out.println("envio mail correctamente");
-					  //}
+					  
 					  
 				  }
 			  }
@@ -178,7 +186,28 @@ public class Alerta extends TimerTask {
 		}
 	}
 
-	
+	private boolean enviar_sms(UsuarioSuceso user){
+		
+		 
+				 
+		
+		try {			
+			
+			//el mensaje ha de ir sin espacios, sustituir espacios por '+'
+			String strMsg="";		
+			strMsg = "Alerta+Activada+Id:" + this.suceso.getId() + "+Tipo:" + this.suceso.getVariable() + "+Valor:" + this.suceso.getValorAlerta();
+			
+			//llama a EnvioSMS con parametros <puerto> <telefono> <mensaje>
+			Runtime.getRuntime().exec("java -jar EnvioSMS.jar COM1 " + user.getTelefono() + " " + strMsg);
+			return true;
+			
+		} catch (IOException e) {
+			return false;
+		}
+		
+		
+		
+	}
 	
 	private boolean enviar_mail_post(UsuarioSuceso user) {
 		
@@ -206,31 +235,7 @@ public class Alerta extends TimerTask {
 	}
 
 	
-	//@SuppressWarnings("unused")
-	/*private boolean enviar_mail(UsuarioSuceso user) {
-						
-		try {
-			if (!user.getMedioNoticar().equals("email")){
-				return false;
-			}
-			
-			String asunto = "Suceso en dispositivo <" + this.dispositivo.getNombre() + ">, Suceso <"+this.suceso.Id+">";
-			String texto="Fecha: " + modelo.Fechas.sdfLocal.format(this.suceso.getAlertaFecha()) + ", (" + 
-						this.suceso.Variable + ") / "  + 
-						"se superó el valor máximo: " + this.suceso.ValorMaximo + 
-						" , valor medido = " + this.suceso.getValorAlerta();
-			
-			SendAuthentication envio = new SendAuthentication("soporte@energymarket.es", user.getEmail(), asunto, texto);
-			
-			return envio.Send();
-			
-		} catch (Exception e) {
-			return false; 
-		}
-		
-		
-
-	}	*/
+	
 	
 	
 }

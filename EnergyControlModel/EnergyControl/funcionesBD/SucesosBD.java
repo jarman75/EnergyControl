@@ -264,17 +264,17 @@ public class SucesosBD extends AccesoBD {
 		Connection con =abrir_conexion();
 		try
 		{
-			ResultSet result = this.ejecutar_query(con, "select Id_suceso, Medio, "
-					+ "Nombre, Email, Telefono from Suceso_Usuario "
-					+ "inner join Usuarios on Suceso_Usuario.Id_usuario=Usuarios.Id"  
+			ResultSet result = this.ejecutar_query(con, "select s.Id_suceso, s.Medio, s.Email, s.Sms"
+					+ "u.Nombre, u.Email, u.Telefono from Suceso_Usuario s "
+					+ "inner join Usuarios u on s.Id_usuario=u.Id"  
 					+ " where Suceso_Usuario.Id_suceso=" + idSuceso );
 			
 			List<UsuarioSuceso> lista = new ArrayList<UsuarioSuceso>();
 			
 			while (result.next()){
-				lista.add( new UsuarioSuceso (result.getInt("Id_suceso"),
-						result.getString("Nombre"), result.getString("Medio"), result.getString("Email"), 
-						result.getInt("Telefono") ));
+				lista.add( new UsuarioSuceso (result.getInt("s.Id_suceso"),
+						result.getString("u.Nombre"), result.getString("s.Medio"), result.getString("u.Email"), 
+						result.getInt("u.Telefono") , result.getBoolean("s.Email"), result.getBoolean("s.Sms")));
 			}
 			
 			return lista;
