@@ -35,6 +35,7 @@ public class UsuariosBD extends AccesoBD{
 			return listaUsuarios;
 			
 		}catch (Exception ex) {
+			System.out.println(ex.getMessage());
 			return null;
 		}finally{
 			cerrar_conexion(con);

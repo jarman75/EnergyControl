@@ -188,8 +188,7 @@ public class Alerta extends TimerTask {
 
 	private boolean enviar_sms(UsuarioSuceso user){
 		
-		 
-				 
+		
 		
 		try {			
 			

@@ -264,22 +264,33 @@ public class SucesosBD extends AccesoBD {
 		Connection con =abrir_conexion();
 		try
 		{
-			ResultSet result = this.ejecutar_query(con, "select s.Id_suceso, s.Medio, s.Email, s.Sms"
+			ResultSet result = this.ejecutar_query(con, "select s.Id_suceso, s.Medio, s.Email, s.Sms, "
 					+ "u.Nombre, u.Email, u.Telefono from Suceso_Usuario s "
-					+ "inner join Usuarios u on s.Id_usuario=u.Id"  
-					+ " where Suceso_Usuario.Id_suceso=" + idSuceso );
+					+ "inner join Usuarios u on s.Id_usuario=u.Id "  
+					+ "where s.Id_suceso=" + idSuceso );
 			
 			List<UsuarioSuceso> lista = new ArrayList<UsuarioSuceso>();
 			
 			while (result.next()){
+				boolean pormail=false;
+				boolean porsms=false;
+				if(result.getString("s.Email").equals("Si")){
+					pormail=true;
+				}
+				if(result.getString("Sms").equals("Si")){
+					porsms=true;
+				}
+				
+				
 				lista.add( new UsuarioSuceso (result.getInt("s.Id_suceso"),
-						result.getString("u.Nombre"), result.getString("s.Medio"), result.getString("u.Email"), 
-						result.getInt("u.Telefono") , result.getBoolean("s.Email"), result.getBoolean("s.Sms")));
+						result.getString("Nombre"), result.getString("Medio"), result.getString("u.Email"), 
+						result.getInt("Telefono") , pormail , porsms));
 			}
 			
 			return lista;
 			
 		}catch(Exception ex){
+			System.out.println(ex.getMessage());
 			return null;
 		}finally{
 			cerrar_conexion(con);
